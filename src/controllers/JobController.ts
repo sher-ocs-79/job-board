@@ -2,11 +2,17 @@ import { Request, Response } from 'express';
 import { Job } from '../models/Job';
 import { sendNotification } from '../services/NotificationService';
 import { fetchExternalJobs } from '../services/ExternalJobService';
+import { validateEmail } from '../utils/helper';
 
 let jobs: Job[] = [];
 
 export const postJob = async (req: Request, res: Response) => {
   const { title, description, email } = req.body;
+
+  // Validate email
+  if (!validateEmail(email)) {
+    return res.status(400).json({ error: 'Invalid email address.' });
+  }
 
   // Check if the email has been used before
   const isFirstTimePoster = !jobs.some((job) => job.email === email);
