@@ -1,15 +1,15 @@
 import nodemailer from 'nodemailer';
 
-export const sendNotification = async (job: { title: string; description: string; email: string }) => {
-  const transporter = nodemailer.createTransport({
-    host: process.env.MAILTRAP_HOST,
-    port: parseInt(process.env.MAILTRAP_PORT || '2525', 10),
-    auth: {
-      user: process.env.MAILTRAP_USER,
-      pass: process.env.MAILTRAP_PASS,
-    },
-  });
+const transporter = nodemailer.createTransport({
+  host: process.env.MAILTRAP_HOST,
+  port: parseInt(process.env.MAILTRAP_PORT || '2525', 10),
+  auth: {
+    user: process.env.MAILTRAP_USER,
+    pass: process.env.MAILTRAP_PASS,
+  },
+});
 
+export const sendNotification = async (job: { title: string; description: string; email: string }) => {  
   const mailOptions = {
     from: process.env.MAIL_FROM,
     to: process.env.MAIL_TO,
