@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { Job } from '../models/Job';
 import { sendNotification } from '../services/NotificationService';
+import { fetchExternalJobs } from '../services/ExternalJobService';
 
 let jobs: Job[] = [];
 
@@ -28,3 +29,12 @@ export const postJob = async (req: Request, res: Response) => {
 
   res.status(201).json({ message: 'Job posted successfully', job: newJob });
 };
+
+export const getJobs = async (req: Request, res: Response) => {
+  const externalJobs = await fetchExternalJobs();
+  const localJobs = jobs.filter((job) => job.isApproved && !job.isSpam);
+
+  const combinedJobs = [...localJobs, ...externalJobs];
+  res.status(200).json(combinedJobs);
+};
+
