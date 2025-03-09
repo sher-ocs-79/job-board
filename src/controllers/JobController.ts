@@ -9,13 +9,11 @@ let jobs: Job[] = [];
 export const postJob = async (req: Request, res: Response): Promise<void> => {
   const { title, description, email } = req.body;
 
-  // Validate email
   if (!validateEmail(email)) {
     res.status(400).json({ error: 'Invalid email address.' });
     return;
   }
 
-  // Check if the email has been used before
   const isFirstTimePoster = !jobs.some((job) => job.email === email);
 
   const newJob: Job = {
@@ -43,4 +41,32 @@ export const getJobs = async (req: Request, res: Response): Promise<void> => {
 
   const combinedJobs = [...localJobs, ...externalJobs];
   res.status(200).json(combinedJobs);
+};
+
+export const approveJob = async (req: Request, res: Response): Promise<void> => {
+  const { email } = req.params;
+
+  const job = jobs.find((job) => job.email === email);
+
+  if (!job) {
+    res.status(404).json({ error: 'Job not found.' });
+    return;
+  }
+
+  job.isApproved = true;
+  res.status(200).json({ message: 'Job approved successfully.', job });
+};
+
+export const markJobAsSpam = async (req: Request, res: Response): Promise<void> => {
+  const { email } = req.params;
+
+  const job = jobs.find((job) => job.email === email);
+
+  if (!job) {
+    res.status(404).json({ error: 'Job not found.' });
+    return;
+  }
+
+  job.isSpam = true;
+  res.status(200).json({ message: 'Job marked as spam successfully.', job });
 };
