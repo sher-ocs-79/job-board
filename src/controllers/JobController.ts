@@ -37,10 +37,32 @@ export const postJob = async (req: Request, res: Response): Promise<void> => {
 
 export const getJobs = async (req: Request, res: Response): Promise<void> => {
   const externalJobs = await fetchExternalJobs();
-  const localJobs = jobs.filter((job) => job.isApproved && !job.isSpam);
 
+  const localJobs = jobs
+    .filter((job) => job.isApproved && !job.isSpam)
+    .map((job) => {
+      return {
+        title: job.title,
+        description: job.description,
+        link: `${process.env.API_HOST}/jobs/${job.id}`,
+      };
+    });
+  
   const combinedJobs = [...localJobs, ...externalJobs];
   res.status(200).json(combinedJobs);
+};
+
+export const getJobById = async (req: Request, res: Response): Promise<void> => {
+  const { jobId } = req.params;
+
+  const job = jobs.find((job) => job.id === jobId);
+
+  if (!job) {
+    res.status(404).json({ error: 'Job not found.' });
+    return;
+  }
+
+  res.status(200).json(job);
 };
 
 export const approveJob = async (req: Request, res: Response): Promise<void> => {
