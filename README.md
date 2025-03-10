@@ -85,7 +85,7 @@ npm run dev
 The server will start at `http://localhost:3000`:
 
 ---
-## **Setup Instructions**
+## **API Endpoints**
 ### **1. Post a Job**
 - **Endpoint:** `POST /jobs`
 - **Request Body:**
